@@ -15,6 +15,10 @@ type IBoolFilter interface {
 type BoolEqFilter struct {
 }
 
+func NewBoolEqFilter() BoolEqFilter {
+	return BoolEqFilter{}
+}
+
 func (b BoolEqFilter) GetKey() string {
 	return consts.EqKey
 }
@@ -28,5 +32,5 @@ func (b BoolEqFilter) Match(element types.JsonElement, matchTarget bool) errors.
 		return nil
 	}
 
-	return internaltypes.NewNotMatchError(b, matchTarget, element)
+	return internaltypes.NewNotMatchError(b, matchTarget, element, nil)
 }

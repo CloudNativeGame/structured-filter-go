@@ -8,27 +8,27 @@ import (
 	"github.com/CloudNativeGame/structured-filter-go/pkg/types"
 )
 
-type INumberFilter interface {
-	types.IFilter[float64]
+type IStringFilter interface {
+	types.IFilter[string]
 }
 
-type NumberEqFilter struct {
+type StringEqFilter struct {
 }
 
-func NewNumberEqFilter() NumberEqFilter {
-	return NumberEqFilter{}
+func NewStringEqFilter() StringEqFilter {
+	return StringEqFilter{}
 }
 
-func (b NumberEqFilter) GetKey() string {
+func (b StringEqFilter) GetKey() string {
 	return consts.EqKey
 }
 
-func (b NumberEqFilter) Valid(element types.JsonElement) errors.FilterError {
-	return checkers.CheckIsValidNumber(b, element)
+func (b StringEqFilter) Valid(element types.JsonElement) errors.FilterError {
+	return checkers.CheckIsValidString(b, element)
 }
 
-func (b NumberEqFilter) Match(element types.JsonElement, matchTarget float64) errors.FilterError {
-	if element.(float64) == matchTarget {
+func (b StringEqFilter) Match(element types.JsonElement, matchTarget string) errors.FilterError {
+	if element.(string) == matchTarget {
 		return nil
 	}
 

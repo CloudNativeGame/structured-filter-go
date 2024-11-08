@@ -1,10 +1,10 @@
 package errors
 
-type FilterErrorType int
+type FilterErrorType string
 
 const (
-	InvalidFilter FilterErrorType = 1
-	NotMatch      FilterErrorType = 2
+	InvalidFilter FilterErrorType = "InvalidFilter"
+	NotMatch      FilterErrorType = "NotMatch"
 )
 
 type FilterError interface {

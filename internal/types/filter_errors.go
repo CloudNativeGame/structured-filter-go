@@ -15,6 +15,10 @@ func NewKeyNotFoundError(key string) errors.FilterError {
 	return internalerrors.NewFilterError(errors.InvalidFilter, "filter key not found: %s", key)
 }
 
-func NewNotMatchError[T any](filter types.IFilter[T], value T, element types.JsonElement) errors.FilterError {
-	return internalerrors.NewFilterError(errors.NotMatch, "%v value %v does not match filter {%s: %v}", reflect.TypeOf(filter), value, filter.GetKey(), element)
+func NewNotMatchError[T any](filter types.IFilter[T], matchTarget T, element types.JsonElement, innerError errors.FilterError) errors.FilterError {
+	msgFormat := "%v value %+#v does not match filter {%s: %v}"
+	if innerError != nil {
+		msgFormat = msgFormat + ", inner error is " + innerError.Error()
+	}
+	return internalerrors.NewFilterError(errors.NotMatch, msgFormat, reflect.TypeOf(filter), matchTarget, filter.GetKey(), element)
 }

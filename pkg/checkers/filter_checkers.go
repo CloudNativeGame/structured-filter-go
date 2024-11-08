@@ -15,7 +15,6 @@ var objectType = reflect.TypeOf(make(map[string]interface{}))
 func CheckIsValidObject[T any](filter types.IFilter[T], element types.JsonElement, checker jsonPropertyChecker) errors.FilterError {
 	filterObject, ok := element.(map[string]interface{})
 	if !ok {
-
 		return internaltypes.NewWrongFilterValueTypeError(filter, element, objectType)
 	}
 
@@ -34,11 +33,61 @@ func CheckIsValidObject[T any](filter types.IFilter[T], element types.JsonElemen
 	return nil
 }
 
+var arrayType = reflect.TypeOf(make([]interface{}, 0))
+
+func checkIsValidArray[T any](filter types.IFilter[T], element types.JsonElement) errors.FilterError {
+	filterArray, ok := element.([]interface{})
+	if !ok {
+		return internaltypes.NewWrongFilterValueTypeError(filter, element, arrayType)
+	}
+
+	if len(filterArray) == 0 {
+		return internalerrors.NewFilterError(errors.InvalidFilter, "array elements count should be more than 0, %v value %v has 0",
+			reflect.TypeOf(element), filterArray)
+	}
+
+	return nil
+}
+
+func CheckIsValidObjectArray[T any](filter types.IFilter[T], element types.JsonElement, checker jsonPropertyChecker) errors.FilterError {
+	err := checkIsValidArray(filter, element)
+	if err != nil {
+		return err
+	}
+
+	for _, filterObject := range element.([]interface{}) {
+		err = CheckIsValidObject(filter, filterObject, checker)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 var boolType = reflect.TypeOf(true)
 
 func CheckIsValidBool[T any](filter types.IFilter[T], element types.JsonElement) errors.FilterError {
 	if _, ok := element.(bool); !ok {
 		return internaltypes.NewWrongFilterValueTypeError(filter, element, boolType)
+	}
+	return nil
+}
+
+var stringType = reflect.TypeOf("")
+
+func CheckIsValidString[T any](filter types.IFilter[T], element types.JsonElement) errors.FilterError {
+	if _, ok := element.(string); !ok {
+		return internaltypes.NewWrongFilterValueTypeError(filter, element, stringType)
+	}
+	return nil
+}
+
+var numberType = reflect.TypeOf(float64(0))
+
+func CheckIsValidNumber[T any](filter types.IFilter[T], element types.JsonElement) errors.FilterError {
+	if _, ok := element.(float64); !ok {
+		return internaltypes.NewWrongFilterValueTypeError(filter, element, numberType)
 	}
 	return nil
 }

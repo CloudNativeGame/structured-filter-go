@@ -1,7 +1,8 @@
 package models
 
 type Player struct {
-	User User `json:"user"`
+	User  User `json:"user"`
+	Level int  `json:"level"`
 }
 
 type User struct {
