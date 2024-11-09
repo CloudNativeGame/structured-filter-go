@@ -5,9 +5,9 @@ import (
 	"github.com/CloudNativeGame/structured-filter-go/internal/filters/basic/number_filter"
 	"github.com/CloudNativeGame/structured-filter-go/internal/filters/basic/string_filter"
 	"github.com/CloudNativeGame/structured-filter-go/internal/filters/logic_filter"
-	"github.com/CloudNativeGame/structured-filter-go/internal/filters/scene_filter"
+	internalscenefilter "github.com/CloudNativeGame/structured-filter-go/internal/filters/scene_filter"
 	"github.com/CloudNativeGame/structured-filter-go/pkg/errors"
-	"github.com/CloudNativeGame/structured-filter-go/pkg/filters/scene"
+	"github.com/CloudNativeGame/structured-filter-go/pkg/filters/scene_filter"
 	"github.com/CloudNativeGame/structured-filter-go/pkg/types"
 )
 
@@ -19,7 +19,7 @@ type FilterFactory[T any] struct {
 	BoolFilterFactory   bool_filter.BoolFilterFactory
 	NumberFilterFactory number_filter.NumberFilterFactory
 	StringFilterFactory string_filter.StringFilterFactory
-	SceneFilterFactory  scene_filter.SceneFilterFactory[T]
+	SceneFilterFactory  internalscenefilter.SceneFilterFactory[T]
 	LogicFilterFactory  logic_filter.LogicFilterFactory[T]
 }
 
@@ -37,7 +37,7 @@ func NewFilterFactory[T any]() *FilterFactory[T] {
 		string_filter.NewStringEqFilter(),
 		string_filter.NewStringNeFilter(),
 	})
-	filterFactory.SceneFilterFactory = scene_filter.NewSceneFilterFactory([]scene.ISceneFilter[T]{})
+	filterFactory.SceneFilterFactory = internalscenefilter.NewSceneFilterFactory([]scene_filter.ISceneFilter[T]{})
 	filterFactory.LogicFilterFactory = logic_filter.NewLogicFilterFactory([]logic_filter.ILogicFilter[T]{
 		logic_filter.NewAndFilter(filterFactory.SceneFilterFactory),
 		logic_filter.NewOrFilter(filterFactory.SceneFilterFactory),
@@ -56,7 +56,7 @@ func (f *FilterFactory[T]) Get(key string) (types.IFilter[T], errors.FilterError
 	return filter, nil
 }
 
-func (f *FilterFactory[T]) WithSceneFilters(sceneFilters []scene.ISceneFilter[T]) *FilterFactory[T] {
+func (f *FilterFactory[T]) WithSceneFilters(sceneFilters []scene_filter.ISceneFilter[T]) *FilterFactory[T] {
 	for _, filter := range sceneFilters {
 		f.SceneFilterFactory.RegisterFilter(filter)
 	}

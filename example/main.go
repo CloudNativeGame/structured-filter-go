@@ -8,7 +8,7 @@ import (
 	"github.com/CloudNativeGame/structured-filter-go/pkg"
 	"github.com/CloudNativeGame/structured-filter-go/pkg/errors"
 	"github.com/CloudNativeGame/structured-filter-go/pkg/factory"
-	"github.com/CloudNativeGame/structured-filter-go/pkg/filters/scene"
+	"github.com/CloudNativeGame/structured-filter-go/pkg/filters/scene_filter"
 	"log/slog"
 )
 
@@ -32,7 +32,7 @@ func main() {
 	playerJson := string(playerJsonBytes)
 
 	filterFactory := factory.NewFilterFactory[*models.Player]()
-	filterService := pkg.NewFilterService[*models.Player](filterFactory.WithSceneFilters([]scene.ISceneFilter[*models.Player]{
+	filterService := pkg.NewFilterService[*models.Player](filterFactory.WithSceneFilters([]scene_filter.ISceneFilter[*models.Player]{
 		scenes.NewIsMaleFilter(filterFactory),
 		scenes.NewUserNameFilter(filterFactory),
 		scenes.NewLevelFilter(filterFactory),

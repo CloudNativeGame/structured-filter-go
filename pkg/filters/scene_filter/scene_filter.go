@@ -1,4 +1,4 @@
-package scene
+package scene_filter
 
 import "github.com/CloudNativeGame/structured-filter-go/pkg/types"
 
