@@ -1,4 +1,4 @@
-package logic
+package logic_filter
 
 import (
 	internaltypes "github.com/CloudNativeGame/structured-filter-go/internal/types"

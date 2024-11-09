@@ -1,4 +1,4 @@
-package basic
+package string_filter
 
 import (
 	internaltypes "github.com/CloudNativeGame/structured-filter-go/internal/types"

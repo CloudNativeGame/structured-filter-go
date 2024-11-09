@@ -1,4 +1,4 @@
-package basic
+package bool_filter
 
 import (
 	internaltypes "github.com/CloudNativeGame/structured-filter-go/internal/types"

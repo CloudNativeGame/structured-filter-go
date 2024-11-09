@@ -65,29 +65,10 @@ func CheckIsValidObjectArray[T any](filter types.IFilter[T], element types.JsonE
 	return nil
 }
 
-var boolType = reflect.TypeOf(true)
-
-func CheckIsValidBool[T any](filter types.IFilter[T], element types.JsonElement) errors.FilterError {
-	if _, ok := element.(bool); !ok {
-		return internaltypes.NewWrongFilterValueTypeError(filter, element, boolType)
-	}
-	return nil
-}
-
-var stringType = reflect.TypeOf("")
-
-func CheckIsValidString[T any](filter types.IFilter[T], element types.JsonElement) errors.FilterError {
-	if _, ok := element.(string); !ok {
-		return internaltypes.NewWrongFilterValueTypeError(filter, element, stringType)
-	}
-	return nil
-}
-
-var numberType = reflect.TypeOf(float64(0))
-
-func CheckIsValidNumber[T any](filter types.IFilter[T], element types.JsonElement) errors.FilterError {
-	if _, ok := element.(float64); !ok {
-		return internaltypes.NewWrongFilterValueTypeError(filter, element, numberType)
+func CheckElementType[T any](filter types.IFilter[T], element types.JsonElement) errors.FilterError {
+	var t T
+	if _, ok := element.(T); !ok {
+		return internaltypes.NewWrongFilterValueTypeError(filter, element, reflect.TypeOf(t))
 	}
 	return nil
 }

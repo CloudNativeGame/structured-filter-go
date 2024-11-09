@@ -1,4 +1,4 @@
-package scene
+package scene_filter
 
 import (
 	internalerrors "github.com/CloudNativeGame/structured-filter-go/internal/errors"

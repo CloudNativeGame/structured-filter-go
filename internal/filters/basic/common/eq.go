@@ -1,4 +1,4 @@
-package basic
+package common
 
 import (
 	"github.com/CloudNativeGame/structured-filter-go/internal/consts"
@@ -8,27 +8,23 @@ import (
 	"github.com/CloudNativeGame/structured-filter-go/pkg/types"
 )
 
-type IBoolFilter interface {
-	types.IFilter[bool]
+type EqFilter[T comparable] struct {
 }
 
-type BoolEqFilter struct {
+func NewEqFilter[T comparable]() EqFilter[T] {
+	return EqFilter[T]{}
 }
 
-func NewBoolEqFilter() BoolEqFilter {
-	return BoolEqFilter{}
-}
-
-func (b BoolEqFilter) GetKey() string {
+func (b EqFilter[T]) GetKey() string {
 	return consts.EqKey
 }
 
-func (b BoolEqFilter) Valid(element types.JsonElement) errors.FilterError {
-	return checkers.CheckIsValidBool(b, element)
+func (b EqFilter[T]) Valid(element types.JsonElement) errors.FilterError {
+	return checkers.CheckElementType(b, element)
 }
 
-func (b BoolEqFilter) Match(element types.JsonElement, matchTarget bool) errors.FilterError {
-	if element.(bool) == matchTarget {
+func (b EqFilter[T]) Match(element types.JsonElement, matchTarget T) errors.FilterError {
+	if element.(T) == matchTarget {
 		return nil
 	}
 

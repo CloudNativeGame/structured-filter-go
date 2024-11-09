@@ -47,7 +47,15 @@ func main() {
 	err = filterService.MatchFilter(filter, &p)
 	checkErrAndPrint(err, filter, playerJson)
 
+	filter = "{\"userName\": {\"$ne\": \"Bob\"}}"
+	err = filterService.MatchFilter(filter, &p)
+	checkErrAndPrint(err, filter, playerJson)
+
 	filter = "{\"level\": {\"$eq\": 10}}"
+	err = filterService.MatchFilter(filter, &p)
+	checkErrAndPrint(err, filter, playerJson)
+
+	filter = "{\"level\": {\"$ne\": 20}}"
 	err = filterService.MatchFilter(filter, &p)
 	checkErrAndPrint(err, filter, playerJson)
 
