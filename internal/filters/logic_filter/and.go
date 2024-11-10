@@ -1,6 +1,7 @@
 package logic_filter
 
 import (
+	"github.com/CloudNativeGame/structured-filter-go/internal/consts"
 	"github.com/CloudNativeGame/structured-filter-go/internal/filters/scene_filter"
 	internaltypes "github.com/CloudNativeGame/structured-filter-go/internal/types"
 	"github.com/CloudNativeGame/structured-filter-go/pkg/checkers"
@@ -19,7 +20,7 @@ func NewAndFilter[T any](sceneFilterFactory scene_filter.SceneFilterFactory[T]) 
 }
 
 func (a AndFilter[T]) GetKey() string {
-	return "$and"
+	return consts.AndKey
 }
 
 func (a AndFilter[T]) Valid(element types.JsonElement) errors.FilterError {

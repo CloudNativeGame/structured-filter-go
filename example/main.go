@@ -3,9 +3,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/CloudNativeGame/structured-filter-go/example/builder"
 	"github.com/CloudNativeGame/structured-filter-go/example/models"
 	"github.com/CloudNativeGame/structured-filter-go/example/scenes"
 	"github.com/CloudNativeGame/structured-filter-go/pkg"
+	filterbuilder "github.com/CloudNativeGame/structured-filter-go/pkg/builder"
 	"github.com/CloudNativeGame/structured-filter-go/pkg/errors"
 	"github.com/CloudNativeGame/structured-filter-go/pkg/factory"
 	"github.com/CloudNativeGame/structured-filter-go/pkg/filters/scene_filter"
@@ -39,41 +41,65 @@ func main() {
 	}))
 
 	// should match
-	filter := "{\"isMale\": {\"$eq\": true}}"
+	filterBuilder := builder.NewPlayerFilterBuilder()
+	filter := filterBuilder.
+		IsMaleObject(filterbuilder.Eq(true)).
+		Build()
+	filterBuilder.Reset()
+	//filter := "{\"isMale\": {\"$eq\": true}}"
 	err := filterService.MatchFilter(filter, &p)
 	checkErrAndPrint(err, filter, playerJson)
 
-	filter = "{\"userName\": {\"$eq\": \"Scott\"}}"
+	filter = filterBuilder.UserNameObject(filterbuilder.Eq("Scott")).Build()
+	filterBuilder.Reset()
+	//filter = "{\"userName\": {\"$eq\": \"Scott\"}}"
 	err = filterService.MatchFilter(filter, &p)
 	checkErrAndPrint(err, filter, playerJson)
 
-	filter = "{\"userName\": {\"$ne\": \"Bob\"}}"
+	filter = filterBuilder.UserNameObject(filterbuilder.Ne("Bob")).Build()
+	filterBuilder.Reset()
+	//filter = "{\"userName\": {\"$ne\": \"Bob\"}}"
 	err = filterService.MatchFilter(filter, &p)
 	checkErrAndPrint(err, filter, playerJson)
 
-	filter = "{\"level\": {\"$eq\": 10}}"
+	filter = filterBuilder.LevelObject(filterbuilder.Eq(10)).Build()
+	filterBuilder.Reset()
+	//filter = "{\"level\": {\"$eq\": 10}}"
 	err = filterService.MatchFilter(filter, &p)
 	checkErrAndPrint(err, filter, playerJson)
 
-	filter = "{\"level\": {\"$ne\": 20}}"
+	filter = filterBuilder.LevelObject(filterbuilder.Ne(20)).Build()
+	filterBuilder.Reset()
+	//filter = "{\"level\": {\"$ne\": 20}}"
 	err = filterService.MatchFilter(filter, &p)
 	checkErrAndPrint(err, filter, playerJson)
 
 	// support k:v, would transform to k:{"$eq":v} internal
-	filter = "{\"isMale\": true}"
+	filter = filterBuilder.IsMale(true).Build()
+	filterBuilder.Reset()
+	//filter = "{\"isMale\": true}"
 	err = filterService.MatchFilter(filter, &p)
 	checkErrAndPrint(err, filter, playerJson)
 
 	// support logic operator
-	filter = "{\"$and\": [{\"isMale\": {\"$eq\": true}}, {\"userName\": {\"$eq\": \"Scott\"}}]}"
+	filter = filterBuilder.And().IsMaleObject(filterbuilder.Eq(true)).
+		UserNameObject(filterbuilder.Eq("Scott")).Build()
+	filterBuilder.Reset()
+	//filter = "{\"$and\": [{\"isMale\": {\"$eq\": true}}, {\"userName\": {\"$eq\": \"Scott\"}}]}"
 	err = filterService.MatchFilter(filter, &p)
 	checkErrAndPrint(err, filter, playerJson)
 
-	filter = "{\"$or\": [{\"isMale\": {\"$eq\": false}}, {\"userName\": {\"$eq\": \"Scott\"}}]}"
+	filter = filterBuilder.Or().IsMaleObject(filterbuilder.Eq(false)).
+		UserNameObject(filterbuilder.Eq("Scott")).Build()
+	filterBuilder.Reset()
+	//filter = "{\"$or\": [{\"isMale\": {\"$eq\": false}}, {\"userName\": {\"$eq\": \"Scott\"}}]}"
 	err = filterService.MatchFilter(filter, &p)
 	checkErrAndPrint(err, filter, playerJson)
 
-	filter = "{\"$or\": [{\"isMale\": false}, {\"userName\": \"Scott\"}]}"
+	filter = filterBuilder.Or().IsMale(false).
+		UserName("Scott").Build()
+	filterBuilder.Reset()
+	//filter = "{\"$or\": [{\"isMale\": false}, {\"userName\": \"Scott\"}]}"
 	err = filterService.MatchFilter(filter, &p)
 	checkErrAndPrint(err, filter, playerJson)
 
@@ -83,15 +109,23 @@ func main() {
 	checkErrAndPrint(err, filter, playerJson)
 
 	// should return not match FilterError
-	filter = "{\"isMale\": {\"$eq\": false}}"
+	filter = filterBuilder.IsMaleObject(filterbuilder.Eq(false)).Build()
+	filterBuilder.Reset()
+	//filter = "{\"isMale\": {\"$eq\": false}}"
 	err = filterService.MatchFilter(filter, &p)
 	checkErrAndPrint(err, filter, playerJson)
 
-	filter = "{\"$and\": [{\"isMale\": {\"$eq\": true}}, {\"userName\": {\"$eq\": \"Tom\"}}]}"
+	filter = filterBuilder.And().IsMaleObject(filterbuilder.Eq(true)).
+		UserNameObject(filterbuilder.Eq("Tom")).Build()
+	filterBuilder.Reset()
+	//filter = "{\"$and\": [{\"isMale\": {\"$eq\": true}}, {\"userName\": {\"$eq\": \"Tom\"}}]}"
 	err = filterService.MatchFilter(filter, &p)
 	checkErrAndPrint(err, filter, playerJson)
 
-	filter = "{\"$or\": [{\"isMale\": {\"$eq\": false}}, {\"userName\": {\"$eq\": \"Tom\"}}]}"
+	filter = filterBuilder.Or().IsMaleObject(filterbuilder.Eq(false)).
+		UserNameObject(filterbuilder.Eq("Tom")).Build()
+	filterBuilder.Reset()
+	//filter = "{\"$or\": [{\"isMale\": {\"$eq\": false}}, {\"userName\": {\"$eq\": \"Tom\"}}]}"
 	err = filterService.MatchFilter(filter, &p)
 	checkErrAndPrint(err, filter, playerJson)
 
