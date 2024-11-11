@@ -3,6 +3,7 @@ package builder
 import (
 	"fmt"
 	"github.com/CloudNativeGame/structured-filter-go/internal/consts"
+	"github.com/CloudNativeGame/structured-filter-go/internal/utils"
 	"reflect"
 	"strconv"
 	"strings"
@@ -127,6 +128,10 @@ func (b *FilterBuilder) kv(key string, value interface{}) *FilterBuilder {
 		b.writeFloat64Value(value)
 	case float64:
 		b.writeFloat64Value(value)
+	case []float64:
+		b.writeFloat64ArrayValue(value.([]float64))
+	case []string:
+		b.writeStringArrayValue(value.([]string))
 	case FilterBuilderObject:
 		if len(value.(FilterBuilderObject)) != 1 {
 			panic(fmt.Errorf("%v should be object with 1 kv", value))
@@ -162,24 +167,38 @@ func (b *FilterBuilder) writeBoolValue(value bool) *FilterBuilder {
 	return b
 }
 
-func toFloat64(num interface{}) float64 {
-	numType := reflect.TypeOf(num)
-	numValue := reflect.ValueOf(num)
-
-	switch numType.Kind() {
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		return float64(numValue.Int())
-	case reflect.Float32, reflect.Float64:
-		return numValue.Float()
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		return float64(numValue.Uint())
-	default:
-		panic(fmt.Errorf("unsupported number type %v for %v", numType, numValue))
-	}
+func (b *FilterBuilder) writeFloat64Value(value interface{}) *FilterBuilder {
+	b.sb.WriteString(strconv.FormatFloat(utils.ToFloat64(value), 'f', -1, 64))
+	b.sb.WriteByte('}')
+	b.appendByte(',')
+	return b
 }
 
-func (b *FilterBuilder) writeFloat64Value(value interface{}) *FilterBuilder {
-	b.sb.WriteString(strconv.FormatFloat(toFloat64(value), 'f', -1, 64))
+func (b *FilterBuilder) writeFloat64ArrayValue(value []float64) *FilterBuilder {
+	b.sb.WriteByte('[')
+	for i, v := range value {
+		if i != 0 {
+			b.sb.WriteByte(',')
+		}
+		b.sb.WriteString(strconv.FormatFloat(v, 'f', -1, 64))
+	}
+	b.sb.WriteByte(']')
+	b.sb.WriteByte('}')
+	b.appendByte(',')
+	return b
+}
+
+func (b *FilterBuilder) writeStringArrayValue(value []string) *FilterBuilder {
+	b.sb.WriteByte('[')
+	for i, v := range value {
+		if i != 0 {
+			b.sb.WriteByte(',')
+		}
+		b.sb.WriteByte('"')
+		b.sb.WriteString(v)
+		b.sb.WriteByte('"')
+	}
+	b.sb.WriteByte(']')
 	b.sb.WriteByte('}')
 	b.appendByte(',')
 	return b

@@ -56,15 +56,39 @@ func main() {
 	err = filterService.MatchFilter(filter, &p)
 	checkErrAndPrint(err, filter, playerJson)
 
+	filter = filterBuilder.UserNameObject(filterbuilder.Regex("^S")).Build()
+	filterBuilder.Reset()
+	//filter = "{\"userName\": {\"$regex\": \"^S\"}}"
+	err = filterService.MatchFilter(filter, &p)
+	checkErrAndPrint(err, filter, playerJson)
+
 	filter = filterBuilder.UserNameObject(filterbuilder.Ne("Bob")).Build()
 	filterBuilder.Reset()
 	//filter = "{\"userName\": {\"$ne\": \"Bob\"}}"
 	err = filterService.MatchFilter(filter, &p)
 	checkErrAndPrint(err, filter, playerJson)
 
+	filter = filterBuilder.UserNameObject(filterbuilder.StringIn([]string{"Bob", "Scott", "Alice"})).Build()
+	filterBuilder.Reset()
+	//filter = "{\"userName\": {\"$in\": [\"Bob\", \"Scott\", \"Alice\"]}}"
+	err = filterService.MatchFilter(filter, &p)
+	checkErrAndPrint(err, filter, playerJson)
+
 	filter = filterBuilder.LevelObject(filterbuilder.Eq(10)).Build()
 	filterBuilder.Reset()
 	//filter = "{\"level\": {\"$eq\": 10}}"
+	err = filterService.MatchFilter(filter, &p)
+	checkErrAndPrint(err, filter, playerJson)
+
+	filter = filterBuilder.LevelObject(filterbuilder.NumberRange([]int{5, 15})).Build()
+	filterBuilder.Reset()
+	//filter = "{\"level\": {\"$range\": [5, 15]}}"
+	err = filterService.MatchFilter(filter, &p)
+	checkErrAndPrint(err, filter, playerJson)
+
+	filter = filterBuilder.LevelObject(filterbuilder.NumberIn([]int{10, 20, 30})).Build()
+	filterBuilder.Reset()
+	//filter = "{\"level\": {\"$in\": [10, 20, 30]}}"
 	err = filterService.MatchFilter(filter, &p)
 	checkErrAndPrint(err, filter, playerJson)
 
