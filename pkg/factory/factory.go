@@ -60,9 +60,15 @@ func (f *FilterFactory[T]) Get(key string) (types.IFilter[T], errors.FilterError
 	return filter, nil
 }
 
+func (f *FilterFactory[T]) WithSceneFilter(sceneFilter scene_filter.ISceneFilter[T]) *FilterFactory[T] {
+	f.SceneFilterFactory.RegisterFilter(sceneFilter)
+
+	return f
+}
+
 func (f *FilterFactory[T]) WithSceneFilters(sceneFilters []scene_filter.ISceneFilter[T]) *FilterFactory[T] {
 	for _, filter := range sceneFilters {
-		f.SceneFilterFactory.RegisterFilter(filter)
+		f.WithSceneFilter(filter)
 	}
 	return f
 }
