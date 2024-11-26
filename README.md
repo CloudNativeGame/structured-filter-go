@@ -145,6 +145,10 @@ for _, player := range filteredPlayers {
 | $eq    | double       | Match successfully when the value of the matching object and filter value are equal                                                                                                           | `{"age": {"$eq": 20}}`           |
 | $ne    | double       | Match successfully when the value of the matching object and filter value are not equal                                                                                                       | `{"age": {"$ne": 20}}`           |
 | $in    | double Array | Match successfully when the value of the matching object is equal to any of the filter values                                                                                                 | `{"age": {"$in": [20, 21, 22]}}` |
+| $lt    | double       | Match successfully when the value of the matching object is less than the filter value                                                                                                        | `{"age": {"$lt": 20}}`           |
+| $gt    | double       | Match successfully when the value of the matching object is greater than the filter value                                                                                                     | `{"age": {"$gt": 20}}`           |
+| $le    | double       | Match successfully when the value of the matching object is less than or equal to the filter value                                                                                            | `{"age": {"$le": 20}}`           |
+| $ge    | double       | Match successfully when the value of the matching object is greater than or equal to the filter value                                                                                         | `{"age": {"$ge": 20}}`           |
 | $range | double Range | Match successfully when the value of the matching object is greater than or equal to the first element in the filter values and less than or equal to the second element in the filter values | `{"age": {"$range": [20, 30]}}`  |
 
 #### String filters
@@ -154,6 +158,7 @@ for _, player := range filteredPlayers {
 | $eq    | string                     | Match successfully when the value of the matching object and filter value are equal                                                                                                           | `{"userName": {"$eq": "Scott"}}`                             |
 | $ne    | string                     | Match successfully when the value of the matching object and filter value are not equal                                                                                                       | `{"userName": {"$ne": "Scott"}}`                             |
 | $in    | string Array               | Match successfully when the value of the matching object is equal to any of the filter values                                                                                                 | `{"userName": {"$in": ["Scott", "Tom", "Bob"]}}`             |
+| $range | string Range               | Match successfully when the value of the matching object is greater than or equal to the first element in the filter values and less than or equal to the second element in the filter values | `{"serialNumber": {"$range": ["abcde00001", "abcde99999"]}}` |
 | $regex | string(regular expression) | Match successfully when the value of the matching object match filter value as regular expression                                                                                             | `{"userName": {"$regex": "^S"}}`                             |
 
 ### Scene filters

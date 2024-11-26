@@ -15,18 +15,18 @@ func NewEqFilter[T comparable]() EqFilter[T] {
 	return EqFilter[T]{}
 }
 
-func (b EqFilter[T]) GetKey() string {
+func (e EqFilter[T]) GetKey() string {
 	return consts.EqKey
 }
 
-func (b EqFilter[T]) Valid(element types.JsonElement) errors.FilterError {
-	return checkers.CheckElementType(b, element)
+func (e EqFilter[T]) Valid(element types.JsonElement) errors.FilterError {
+	return checkers.CheckElementType(e, element)
 }
 
-func (b EqFilter[T]) Match(element types.JsonElement, matchTarget T) errors.FilterError {
+func (e EqFilter[T]) Match(element types.JsonElement, matchTarget T) errors.FilterError {
 	if element.(T) == matchTarget {
 		return nil
 	}
 
-	return internaltypes.NewNotMatchError(b, matchTarget, element, nil)
+	return internaltypes.NewNotMatchError(e, matchTarget, element, nil)
 }

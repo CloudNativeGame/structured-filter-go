@@ -83,6 +83,12 @@ func main() {
 	err = filterService.Match(filter, &p)
 	checkErrAndPrint(err, filter, playerJson)
 
+	filter = filterBuilder.UserNameObject(filterbuilder.StringRange([]string{"Sam", "Stella"})).Build()
+	filterBuilder.Reset()
+	//filter = "{\"userName\": {\"$range\": [\"Sam\", \"Stella\"]}}"
+	err = filterService.Match(filter, &p)
+	checkErrAndPrint(err, filter, playerJson)
+
 	filter = filterBuilder.UserNameObject(filterbuilder.Regex("^S")).Build()
 	filterBuilder.Reset()
 	//filter = "{\"userName\": {\"$regex\": \"^S\"}}"
@@ -104,6 +110,12 @@ func main() {
 	filter = filterBuilder.LevelObject(filterbuilder.Eq(10)).Build()
 	filterBuilder.Reset()
 	//filter = "{\"level\": {\"$eq\": 10}}"
+	err = filterService.Match(filter, &p)
+	checkErrAndPrint(err, filter, playerJson)
+
+	filter = filterBuilder.LevelObject(filterbuilder.Le(10)).Build()
+	filterBuilder.Reset()
+	//filter = "{\"level\": {\"$le\": 10}}"
 	err = filterService.Match(filter, &p)
 	checkErrAndPrint(err, filter, playerJson)
 
@@ -154,11 +166,6 @@ func main() {
 	err = filterService.Match(filter, &p)
 	checkErrAndPrint(err, filter, playerJson)
 
-	// array should only contain objects, other types like below should return FilterError
-	filter = "{\"$or\": [false, \"Scott\"]}"
-	err = filterService.Match(filter, &p)
-	checkErrAndPrint(err, filter, playerJson)
-
 	// should return not match FilterError
 	filter = filterBuilder.IsMaleObject(filterbuilder.Eq(false)).Build()
 	filterBuilder.Reset()
@@ -180,12 +187,43 @@ func main() {
 	err = filterService.Match(filter, &p)
 	checkErrAndPrint(err, filter, playerJson)
 
-	// wrong value type should return FilterError
+	filter = filterBuilder.LevelObject(filterbuilder.Lt(10)).Build()
+	filterBuilder.Reset()
+	//filter = "{\"level\": {\"$lt\": 10}}"
+	err = filterService.Match(filter, &p)
+	checkErrAndPrint(err, filter, playerJson)
+
+	filter = filterBuilder.UserNameObject(filterbuilder.StringRange([]string{"Zarah", "Zero"})).Build()
+	filterBuilder.Reset()
+	//filter = "{\"userName\": {\"$range\": [\"Zarah\", \"Zero\"]}}"
+	err = filterService.Match(filter, &p)
+	checkErrAndPrint(err, filter, playerJson)
+
+	// should return InvalidFilter error because Logic Filter array should only contain object elements
+	filter = "{\"$or\": [false, \"Scott\"]}"
+	err = filterService.Match(filter, &p)
+	checkErrAndPrint(err, filter, playerJson)
+
+	// should return InvalidFilter error because of wrong range syntax
+	filter = filterBuilder.UserNameObject(filterbuilder.StringRange([]string{"Sam", "Stella", "Tom"})).Build()
+	filterBuilder.Reset()
+	//filter = "{\"userName\": {\"$range\": [\"Sam\", \"Stella\", \"Tom\"]}}"
+	err = filterService.Match(filter, &p)
+	checkErrAndPrint(err, filter, playerJson)
+
+	// should return InvalidFilter error because of wrong range syntax
+	filter = filterBuilder.UserNameObject(filterbuilder.StringRange([]string{"Stella", "Sam"})).Build()
+	filterBuilder.Reset()
+	//filter = "{\"userName\": {\"$range\": [\"Stella\", \"Sam\"]}}"
+	err = filterService.Match(filter, &p)
+	checkErrAndPrint(err, filter, playerJson)
+
+	// should return InvalidFilter error because of wrong value type
 	filter = "{\"isMale\": [true, false]}"
 	err = filterService.Match(filter, &p)
 	checkErrAndPrint(err, filter, playerJson)
 
-	// wrong value type should return FilterError
+	// should return InvalidFilter error because of wrong value type
 	filter = "{\"isMale\": {\"$eq\": 1}}"
 	err = filterService.Match(filter, &p)
 	checkErrAndPrint(err, filter, playerJson)

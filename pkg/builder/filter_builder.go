@@ -168,7 +168,7 @@ func (b *FilterBuilder) writeBoolValue(value bool) *FilterBuilder {
 }
 
 func (b *FilterBuilder) writeFloat64Value(value interface{}) *FilterBuilder {
-	b.sb.WriteString(strconv.FormatFloat(utils.ToFloat64(value), 'f', -1, 64))
+	b.sb.WriteString(strconv.FormatFloat(utils.NumberToFloat64(value), 'f', -1, 64))
 	b.sb.WriteByte('}')
 	b.appendByte(',')
 	return b

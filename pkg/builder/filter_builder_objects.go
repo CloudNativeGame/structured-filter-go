@@ -1,6 +1,7 @@
 package builder
 
 import (
+	"cmp"
 	"github.com/CloudNativeGame/structured-filter-go/internal/consts"
 	"github.com/CloudNativeGame/structured-filter-go/internal/utils"
 )
@@ -15,12 +16,32 @@ func Ne[T comparable](value T) FilterBuilderObject {
 	return filterBuilderObject(consts.NeKey, value)
 }
 
+func Lt[T cmp.Ordered](value T) FilterBuilderObject {
+	return filterBuilderObject(consts.LtKey, value)
+}
+
+func Gt[T cmp.Ordered](value T) FilterBuilderObject {
+	return filterBuilderObject(consts.GtKey, value)
+}
+
+func Le[T cmp.Ordered](value T) FilterBuilderObject {
+	return filterBuilderObject(consts.LeKey, value)
+}
+
+func Ge[T cmp.Ordered](value T) FilterBuilderObject {
+	return filterBuilderObject(consts.GeKey, value)
+}
+
 func NumberRange[T comparable](value []T) FilterBuilderObject {
 	float64Arr := make([]float64, 0, len(value))
 	for _, v := range value {
-		float64Arr = append(float64Arr, utils.ToFloat64(v))
+		float64Arr = append(float64Arr, utils.NumberToFloat64(v))
 	}
 	return filterBuilderObject(consts.RangeKey, float64Arr)
+}
+
+func StringRange(value []string) FilterBuilderObject {
+	return filterBuilderObject(consts.RangeKey, value)
 }
 
 func Regex(value string) FilterBuilderObject {
@@ -30,7 +51,7 @@ func Regex(value string) FilterBuilderObject {
 func NumberIn[T comparable](value []T) FilterBuilderObject {
 	float64Arr := make([]float64, 0, len(value))
 	for _, v := range value {
-		float64Arr = append(float64Arr, utils.ToFloat64(v))
+		float64Arr = append(float64Arr, utils.NumberToFloat64(v))
 	}
 	return filterBuilderObject(consts.InKey, float64Arr)
 }

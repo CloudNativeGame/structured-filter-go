@@ -34,12 +34,17 @@ func NewFilterFactory[T any]() *FilterFactory[T] {
 		number_filter.NewNumberNeFilter(),
 		number_filter.NewNumberRangeFilter(),
 		number_filter.NewNumberInFilter(),
+		number_filter.NewNumberGtFilter(),
+		number_filter.NewNumberLtFilter(),
+		number_filter.NewNumberGeFilter(),
+		number_filter.NewNumberLeFilter(),
 	})
 	filterFactory.StringFilterFactory = string_filter.NewStringFilterFactory([]string_filter.IStringFilter{
 		string_filter.NewStringEqFilter(),
 		string_filter.NewStringNeFilter(),
 		string_filter.NewRegexFilter(),
 		string_filter.NewStringInFilter(),
+		string_filter.NewStringRangeFilter(),
 	})
 	filterFactory.SceneFilterFactory = internalscenefilter.NewSceneFilterFactory([]scene_filter.ISceneFilter[T]{})
 	filterFactory.LogicFilterFactory = logic_filter.NewLogicFilterFactory([]logic_filter.ILogicFilter[T]{

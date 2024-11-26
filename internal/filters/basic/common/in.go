@@ -15,15 +15,15 @@ func NewInFilter[T comparable]() InFilter[T] {
 	return InFilter[T]{}
 }
 
-func (b InFilter[T]) GetKey() string {
+func (i InFilter[T]) GetKey() string {
 	return consts.InKey
 }
 
-func (b InFilter[T]) Valid(element types.JsonElement) errors.FilterError {
-	return checkers.CheckIsValidArray(b, element, nil, true)
+func (i InFilter[T]) Valid(element types.JsonElement) errors.FilterError {
+	return checkers.CheckIsValidArray(i, element, nil, true)
 }
 
-func (b InFilter[T]) Match(element types.JsonElement, matchTarget T) errors.FilterError {
+func (i InFilter[T]) Match(element types.JsonElement, matchTarget T) errors.FilterError {
 	arr := element.([]interface{})
 	for _, val := range arr {
 		if matchTarget == val.(T) {
@@ -31,5 +31,5 @@ func (b InFilter[T]) Match(element types.JsonElement, matchTarget T) errors.Filt
 		}
 	}
 
-	return internaltypes.NewNotMatchError(b, matchTarget, element, nil)
+	return internaltypes.NewNotMatchError(i, matchTarget, element, nil)
 }

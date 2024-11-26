@@ -85,7 +85,7 @@ func CheckIsValidObjectArray[T any](filter types.IFilter[T], element types.JsonE
 var rangeElementNumber = 2
 
 func CheckIsValidNumberRange(filter types.IFilter[float64], element types.JsonElement) errors.FilterError {
-	err := CheckIsValidArray(filter, element, &rangeElementNumber, true)
+	err := checkIsValidRange(filter, element)
 	if err != nil {
 		return err
 	}
@@ -95,9 +95,48 @@ func CheckIsValidNumberRange(filter types.IFilter[float64], element types.JsonEl
 		return internaltypes.NewWrongFilterValueTypeError(filter, element, arrayType)
 	}
 
-	if utils.ToFloat64(filterArray[1])-utils.ToFloat64(filterArray[0]) < 0 {
+	if utils.NumberToFloat64(filterArray[1])-utils.NumberToFloat64(filterArray[0]) < 0 {
 		return internalerrors.NewFilterError(errors.InvalidFilter,
 			"the second element of the range %f is not >= the first element %f",
+			filterArray[1], filterArray[0])
+	}
+
+	return nil
+}
+
+func checkIsValidRange[T comparable](filter types.IFilter[T], element types.JsonElement) errors.FilterError {
+	err := CheckIsValidArray(filter, element, &rangeElementNumber, true)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func CheckIsValidStringRange(filter types.IFilter[string], element types.JsonElement) errors.FilterError {
+	err := checkIsValidRange(filter, element)
+	if err != nil {
+		return err
+	}
+
+	filterArray, ok := element.([]interface{})
+	if !ok {
+		return internaltypes.NewWrongFilterValueTypeError(filter, element, arrayType)
+	}
+
+	firstElem, ok := filterArray[0].(string)
+	if !ok {
+		return internaltypes.NewWrongFilterValueTypeError(filter, element, arrayType)
+	}
+
+	secondElem, ok := filterArray[1].(string)
+	if !ok {
+		return internaltypes.NewWrongFilterValueTypeError(filter, element, arrayType)
+	}
+
+	if secondElem < firstElem {
+		return internalerrors.NewFilterError(errors.InvalidFilter,
+			"the second element of the range %s is not >= the first element %s",
 			filterArray[1], filterArray[0])
 	}
 

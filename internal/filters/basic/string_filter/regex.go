@@ -16,19 +16,19 @@ func NewRegexFilter() RegexFilter {
 	return RegexFilter{}
 }
 
-func (b RegexFilter) GetKey() string {
+func (r RegexFilter) GetKey() string {
 	return consts.RegexKey
 }
 
-func (b RegexFilter) Valid(element types.JsonElement) errors.FilterError {
-	return checkers.CheckElementType(b, element)
+func (r RegexFilter) Valid(element types.JsonElement) errors.FilterError {
+	return checkers.CheckElementType(r, element)
 }
 
-func (b RegexFilter) Match(element types.JsonElement, matchTarget string) errors.FilterError {
+func (r RegexFilter) Match(element types.JsonElement, matchTarget string) errors.FilterError {
 	match, _ := regexp.MatchString(element.(string), matchTarget)
 	if match {
 		return nil
 	}
 
-	return internaltypes.NewNotMatchError(b, matchTarget, element, nil)
+	return internaltypes.NewNotMatchError(r, matchTarget, element, nil)
 }

@@ -5,7 +5,7 @@ import (
 	"reflect"
 )
 
-func ToFloat64(num interface{}) float64 {
+func NumberToFloat64(num interface{}) float64 {
 	numType := reflect.TypeOf(num)
 	numValue := reflect.ValueOf(num)
 
