@@ -168,3 +168,29 @@ for _, player := range filteredPlayers {
     * BoolSceneFilter
     * NumberSceneFilter
     * StringSceneFilter
+
+## Filter Builders
+
+Filter Builders are used to construct the filter string by chaining method calls.
+
+```go
+type IFilterBuilder interface {
+  // Or And must be placed before any other method call, and only one of them can be called, at most once.
+  Or() IFilterBuilder
+  And() IFilterBuilder
+  // KStringV KBoolV KNumberV are used to build `$eq` filters of corresponding data types.
+  KStringV(key string, value string) IFilterBuilder
+  KBoolV(key string, value bool) IFilterBuilder
+  KNumberV(key string, value float64) IFilterBuilder
+  // KObjectV is used to build filters other than `$eq`.
+  KObjectV(key string, value FilterBuilderObject) IFilterBuilder
+  // Build is usually placed at the end of the chaining method calls and returns the filter string. It is reentrant.
+  Build() string
+  // Reset is used to clean all the filters in the `IFilterBuilder` if you need to build another filter string.
+  Reset()
+}
+```
+
+* `Or`/`And` must be placed before any other method call, and only one of them can be called, at most once.
+* `KStringV`/`KBoolV`/`KNumberV` are used to build `$eq` filters of corresponding data types when `KObjectV` is used to build other filters like `$lt`, `$range`, `$in` and all other filters mentioned above.
+* `Build` is usually placed at the end of the chaining method calls and returns the filter string. `Build` is reentrant and you can call `Reset` to clean all the filters in the `IFilterBuilder` if you need to build another filter string.
