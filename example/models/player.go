@@ -1,8 +1,11 @@
 package models
 
 type Player struct {
-	User  User `json:"user"`
-	Level int  `json:"level"`
+	Id     int      `json:"id"`
+	User   User     `json:"user"`
+	Level  int      `json:"level"`
+	Ids    []int    `json:"ids"`
+	Labels []string `json:"labels"`
 }
 
 type User struct {

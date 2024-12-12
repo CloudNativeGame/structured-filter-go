@@ -1,9 +1,9 @@
 package number_filter
 
 import (
-	"github.com/CloudNativeGame/structured-filter-go/internal/filters/basic/common"
+	"github.com/CloudNativeGame/structured-filter-go/internal/filters/basic/common/value_filter"
 )
 
 func NewNumberGeFilter() INumberFilter {
-	return common.NewGeFilter[float64]()
+	return value_filter.NewGeFilter[float64]()
 }

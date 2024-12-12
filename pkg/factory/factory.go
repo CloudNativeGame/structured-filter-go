@@ -2,7 +2,9 @@ package factory
 
 import (
 	"github.com/CloudNativeGame/structured-filter-go/internal/filters/basic/bool_filter"
+	"github.com/CloudNativeGame/structured-filter-go/internal/filters/basic/number_array_filter"
 	"github.com/CloudNativeGame/structured-filter-go/internal/filters/basic/number_filter"
+	"github.com/CloudNativeGame/structured-filter-go/internal/filters/basic/string_array_filter"
 	"github.com/CloudNativeGame/structured-filter-go/internal/filters/basic/string_filter"
 	"github.com/CloudNativeGame/structured-filter-go/internal/filters/logic_filter"
 	internalscenefilter "github.com/CloudNativeGame/structured-filter-go/internal/filters/scene_filter"
@@ -16,11 +18,13 @@ type IFilterFactory[T any] interface {
 }
 
 type FilterFactory[T any] struct {
-	BoolFilterFactory   bool_filter.BoolFilterFactory
-	NumberFilterFactory number_filter.NumberFilterFactory
-	StringFilterFactory string_filter.StringFilterFactory
-	SceneFilterFactory  internalscenefilter.SceneFilterFactory[T]
-	LogicFilterFactory  logic_filter.LogicFilterFactory[T]
+	BoolFilterFactory        bool_filter.BoolFilterFactory
+	NumberFilterFactory      number_filter.NumberFilterFactory
+	NumberArrayFilterFactory number_array_filter.NumberArrayFilterFactory
+	StringFilterFactory      string_filter.StringFilterFactory
+	StringArrayFilterFactory string_array_filter.StringArrayFilterFactory
+	SceneFilterFactory       internalscenefilter.SceneFilterFactory[T]
+	LogicFilterFactory       logic_filter.LogicFilterFactory[T]
 }
 
 func NewFilterFactory[T any]() *FilterFactory[T] {
@@ -39,12 +43,20 @@ func NewFilterFactory[T any]() *FilterFactory[T] {
 		number_filter.NewNumberGeFilter(),
 		number_filter.NewNumberLeFilter(),
 	})
+	filterFactory.NumberArrayFilterFactory = number_array_filter.NewNumberArrayFilterFactory([]number_array_filter.INumberArrayFilter{
+		number_array_filter.NewNumberArrayAllFilter(),
+		number_array_filter.NewNumberArrayEqFilter(),
+	})
 	filterFactory.StringFilterFactory = string_filter.NewStringFilterFactory([]string_filter.IStringFilter{
 		string_filter.NewStringEqFilter(),
 		string_filter.NewStringNeFilter(),
 		string_filter.NewRegexFilter(),
 		string_filter.NewStringInFilter(),
 		string_filter.NewStringRangeFilter(),
+	})
+	filterFactory.StringArrayFilterFactory = string_array_filter.NewStringArrayFilterFactory([]string_array_filter.IStringArrayFilter{
+		string_array_filter.NewStringArrayAllFilter(),
+		string_array_filter.NewStringArrayEqFilter(),
 	})
 	filterFactory.SceneFilterFactory = internalscenefilter.NewSceneFilterFactory([]scene_filter.ISceneFilter[T]{})
 	filterFactory.LogicFilterFactory = logic_filter.NewLogicFilterFactory([]logic_filter.ILogicFilter[T]{

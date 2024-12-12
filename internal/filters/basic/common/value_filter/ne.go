@@ -1,4 +1,4 @@
-package common
+package value_filter
 
 import (
 	"github.com/CloudNativeGame/structured-filter-go/internal/consts"

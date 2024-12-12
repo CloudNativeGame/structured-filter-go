@@ -36,27 +36,54 @@ func CheckIsValidObject[T any](filter types.IFilter[T], element types.JsonElemen
 
 var arrayType = reflect.TypeOf(make([]interface{}, 0))
 
-func CheckIsValidArray[T any](filter types.IFilter[T], element types.JsonElement, elementNumber *int, checkType bool) errors.FilterError {
+func checkIsValidArray[T any](filter types.IFilter[T], element types.JsonElement, elementNumber *int) ([]interface{}, errors.FilterError) {
 	filterArray, ok := element.([]interface{})
 	if !ok {
-		return internaltypes.NewWrongFilterValueTypeError(filter, element, arrayType)
+		return nil, internaltypes.NewWrongFilterValueTypeError(filter, element, arrayType)
 	}
 
 	if len(filterArray) == 0 {
-		return internalerrors.NewFilterError(errors.InvalidFilter, "array elements count should be more than 0, %v value %v has 0",
+		return nil, internalerrors.NewFilterError(errors.InvalidFilter, "array elements count should be more than 0, %v value %v has 0",
 			reflect.TypeOf(element), filterArray)
 	}
 
 	if elementNumber != nil {
 		if len(filterArray) != *elementNumber {
-			return internalerrors.NewFilterError(errors.InvalidFilter, "array elements count should be %d, %v value %v has %d",
+			return nil, internalerrors.NewFilterError(errors.InvalidFilter, "array elements count should be %d, %v value %v has %d",
 				*elementNumber, reflect.TypeOf(element), filterArray, len(filterArray))
 		}
+	}
+
+	return filterArray, nil
+}
+
+func CheckIsValidArray[T any](filter types.IFilter[T], element types.JsonElement, elementNumber *int, checkType bool) errors.FilterError {
+	filterArray, err := checkIsValidArray(filter, element, elementNumber)
+	if err != nil {
+		return err
 	}
 
 	if checkType {
 		for _, val := range filterArray {
 			err := CheckElementType(filter, val)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func CheckIsValidArrayForArrayFilter[TFilter, TFilterElement any](filter types.IArrayFilter[TFilter, TFilterElement], element types.JsonElement, elementNumber *int, checkType bool) errors.FilterError {
+	filterArray, err := checkIsValidArray(filter, element, elementNumber)
+	if err != nil {
+		return err
+	}
+
+	if checkType {
+		for _, val := range filterArray {
+			err := checkElementTypeForArrayFilter[TFilter, TFilterElement](filter, val)
 			if err != nil {
 				return err
 			}
@@ -146,6 +173,14 @@ func CheckIsValidStringRange(filter types.IFilter[string], element types.JsonEle
 func CheckElementType[T any](filter types.IFilter[T], element types.JsonElement) errors.FilterError {
 	var t T
 	if _, ok := element.(T); !ok {
+		return internaltypes.NewWrongFilterValueTypeError(filter, element, reflect.TypeOf(t))
+	}
+	return nil
+}
+
+func checkElementTypeForArrayFilter[TFilter, TFilterElement any](filter types.IArrayFilter[TFilter, TFilterElement], element types.JsonElement) errors.FilterError {
+	var t TFilterElement
+	if _, ok := element.(TFilterElement); !ok {
 		return internaltypes.NewWrongFilterValueTypeError(filter, element, reflect.TypeOf(t))
 	}
 	return nil

@@ -56,8 +56,32 @@ func NumberIn[T comparable](value []T) FilterBuilderObject {
 	return filterBuilderObject(consts.InKey, float64Arr)
 }
 
+func NumberArrayAll[T comparable](value []T) FilterBuilderObject {
+	float64Arr := make([]float64, 0, len(value))
+	for _, v := range value {
+		float64Arr = append(float64Arr, utils.NumberToFloat64(v))
+	}
+	return filterBuilderObject(consts.AllKey, float64Arr)
+}
+
+func NumberArrayEq[T comparable](value []T) FilterBuilderObject {
+	float64Arr := make([]float64, 0, len(value))
+	for _, v := range value {
+		float64Arr = append(float64Arr, utils.NumberToFloat64(v))
+	}
+	return filterBuilderObject(consts.EqKey, float64Arr)
+}
+
 func StringIn(value []string) FilterBuilderObject {
 	return filterBuilderObject(consts.InKey, value)
+}
+
+func StringArrayAll(value []string) FilterBuilderObject {
+	return filterBuilderObject(consts.AllKey, value)
+}
+
+func StringArrayEq(value []string) FilterBuilderObject {
+	return filterBuilderObject(consts.EqKey, value)
 }
 
 func filterBuilderObject[T any](key string, value T) FilterBuilderObject {

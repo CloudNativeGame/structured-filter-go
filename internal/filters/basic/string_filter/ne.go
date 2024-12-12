@@ -1,9 +1,9 @@
 package string_filter
 
 import (
-	"github.com/CloudNativeGame/structured-filter-go/internal/filters/basic/common"
+	"github.com/CloudNativeGame/structured-filter-go/internal/filters/basic/common/value_filter"
 )
 
 func NewStringNeFilter() IStringFilter {
-	return common.NewNeFilter[string]()
+	return value_filter.NewNeFilter[string]()
 }

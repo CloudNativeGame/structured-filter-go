@@ -24,11 +24,14 @@ func checkErrAndPrint(err errors.FilterError, filter, matchTarget string) {
 
 func main() {
 	p := models.Player{
+		Id: 1,
 		User: models.User{
 			Name:   "Scott",
 			IsMale: true,
 		},
-		Level: 10,
+		Ids:    []int{1, 2, 3, 4, 5},
+		Level:  10,
+		Labels: []string{"season 1", "region a"},
 	}
 	playerJsonBytes, _ := json.Marshal(p)
 	playerJson := string(playerJsonBytes)
@@ -43,6 +46,12 @@ func main() {
 			},
 			func(factory *factory.FilterFactory[*models.Player]) scene_filter.ISceneFilter[*models.Player] {
 				return scenes.NewLevelFilter(factory)
+			},
+			func(factory *factory.FilterFactory[*models.Player]) scene_filter.ISceneFilter[*models.Player] {
+				return scenes.NewPlayerIdsFilter(factory)
+			},
+			func(factory *factory.FilterFactory[*models.Player]) scene_filter.ISceneFilter[*models.Player] {
+				return scenes.NewPlayerLabelsFilter(factory)
 			},
 		})
 
@@ -86,6 +95,42 @@ func main() {
 	filter = filterBuilder.UserNameObject(filterbuilder.StringRange([]string{"Sam", "Stella"})).Build()
 	filterBuilder.Reset()
 	//filter = "{\"userName\": {\"$range\": [\"Sam\", \"Stella\"]}}"
+	err = filterService.Match(filter, &p)
+	checkErrAndPrint(err, filter, playerJson)
+
+	filter = filterBuilder.PlayerIds([]int{1, 2, 3, 4, 5}).Build()
+	filterBuilder.Reset()
+	//filter = "{\"playerIds\": [1, 2, 3, 4, 5]}"
+	err = filterService.Match(filter, &p)
+	checkErrAndPrint(err, filter, playerJson)
+
+	filter = filterBuilder.PlayerIdsObject(filterbuilder.NumberArrayEq([]int{1, 2, 3, 4, 5})).Build()
+	filterBuilder.Reset()
+	//filter = "{\"playerIds\": {\"$eq\": [1, 2, 3, 4, 5]}}"
+	err = filterService.Match(filter, &p)
+	checkErrAndPrint(err, filter, playerJson)
+
+	filter = filterBuilder.PlayerIdsObject(filterbuilder.NumberArrayAll([]int{2, 3})).Build()
+	filterBuilder.Reset()
+	//filter = "{\"playerIds\": {\"$all\": [2, 3]}}"
+	err = filterService.Match(filter, &p)
+	checkErrAndPrint(err, filter, playerJson)
+
+	filter = filterBuilder.PlayerLabels([]string{"season 1", "region a"}).Build()
+	filterBuilder.Reset()
+	//filter = "{\"playerLabels\": [\"season 1\", \"region a\"]}"
+	err = filterService.Match(filter, &p)
+	checkErrAndPrint(err, filter, playerJson)
+
+	filter = filterBuilder.PlayerLabelsObject(filterbuilder.StringArrayEq([]string{"season 1", "region a"})).Build()
+	filterBuilder.Reset()
+	//filter = "{\"playerIds\": {\"$eq\": [\"season 1\", \"region a\"]}}"
+	err = filterService.Match(filter, &p)
+	checkErrAndPrint(err, filter, playerJson)
+
+	filter = filterBuilder.PlayerLabelsObject(filterbuilder.StringArrayAll([]string{"season 1"})).Build()
+	filterBuilder.Reset()
+	//filter = "{\"playerIds\": {\"$all\": [\"season 1\"]}}"
 	err = filterService.Match(filter, &p)
 	checkErrAndPrint(err, filter, playerJson)
 
@@ -196,6 +241,54 @@ func main() {
 	filter = filterBuilder.UserNameObject(filterbuilder.StringRange([]string{"Zarah", "Zero"})).Build()
 	filterBuilder.Reset()
 	//filter = "{\"userName\": {\"$range\": [\"Zarah\", \"Zero\"]}}"
+	err = filterService.Match(filter, &p)
+	checkErrAndPrint(err, filter, playerJson)
+
+	filter = filterBuilder.PlayerIds([]int{1, 2, 3, 4}).Build()
+	filterBuilder.Reset()
+	//filter = "{\"playerIds\": [1, 2, 3, 4]}"
+	err = filterService.Match(filter, &p)
+	checkErrAndPrint(err, filter, playerJson)
+
+	filter = filterBuilder.PlayerIds([]int{5, 2, 3, 4, 1}).Build()
+	filterBuilder.Reset()
+	//filter = "{\"playerIds\": [5, 2, 3, 4, 1]}"
+	err = filterService.Match(filter, &p)
+	checkErrAndPrint(err, filter, playerJson)
+
+	filter = filterBuilder.PlayerIdsObject(filterbuilder.NumberArrayEq([]int{2, 3, 4, 5})).Build()
+	filterBuilder.Reset()
+	//filter = "{\"playerIds\": {\"$eq\": [2, 3, 4, 5]}}"
+	err = filterService.Match(filter, &p)
+	checkErrAndPrint(err, filter, playerJson)
+
+	filter = filterBuilder.PlayerIdsObject(filterbuilder.NumberArrayAll([]int{2, 3, 6})).Build()
+	filterBuilder.Reset()
+	//filter = "{\"playerIds\": {\"$all\": [2, 3, 6]}}"
+	err = filterService.Match(filter, &p)
+	checkErrAndPrint(err, filter, playerJson)
+
+	filter = filterBuilder.PlayerLabels([]string{"season 1"}).Build()
+	filterBuilder.Reset()
+	//filter = "{\"playerLabels\": [\"season 1\"]}"
+	err = filterService.Match(filter, &p)
+	checkErrAndPrint(err, filter, playerJson)
+
+	filter = filterBuilder.PlayerLabels([]string{"season 1", "region b"}).Build()
+	filterBuilder.Reset()
+	//filter = "{\"playerLabels\": [\"season 1\", \"region b\"]}"
+	err = filterService.Match(filter, &p)
+	checkErrAndPrint(err, filter, playerJson)
+
+	filter = filterBuilder.PlayerLabelsObject(filterbuilder.StringArrayEq([]string{"region a", "season 1"})).Build()
+	filterBuilder.Reset()
+	//filter = "{\"playerIds\": {\"$eq\": [\"region a\", \"season 1\"]}}"
+	err = filterService.Match(filter, &p)
+	checkErrAndPrint(err, filter, playerJson)
+
+	filter = filterBuilder.PlayerLabelsObject(filterbuilder.StringArrayAll([]string{"season 1", "region b"})).Build()
+	filterBuilder.Reset()
+	//filter = "{\"playerIds\": {\"$all\": [\"season 1\", \"region b\"]}}"
 	err = filterService.Match(filter, &p)
 	checkErrAndPrint(err, filter, playerJson)
 

@@ -81,3 +81,27 @@ func (p *PlayerFilterBuilder) LevelObject(obj builder.FilterBuilderObject) *Play
 	p.filterBuilder.KObjectV("level", obj)
 	return p
 }
+
+func (p *PlayerFilterBuilder) PlayerIds(ids []int) *PlayerFilterBuilder {
+	floatArr := make([]float64, 0, len(ids))
+	for _, id := range ids {
+		floatArr = append(floatArr, float64(id))
+	}
+	p.filterBuilder.KNumberArrayV("playerIds", floatArr)
+	return p
+}
+
+func (p *PlayerFilterBuilder) PlayerIdsObject(obj builder.FilterBuilderObject) *PlayerFilterBuilder {
+	p.filterBuilder.KObjectV("playerIds", obj)
+	return p
+}
+
+func (p *PlayerFilterBuilder) PlayerLabels(labels []string) *PlayerFilterBuilder {
+	p.filterBuilder.KStringArrayV("playerLabels", labels)
+	return p
+}
+
+func (p *PlayerFilterBuilder) PlayerLabelsObject(obj builder.FilterBuilderObject) *PlayerFilterBuilder {
+	p.filterBuilder.KObjectV("playerLabels", obj)
+	return p
+}
