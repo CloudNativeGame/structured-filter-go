@@ -12,6 +12,7 @@ package main
 type Player struct {
 	User  User `json:"user"`
 	Level int  `json:"level"`
+	Tags []string `json:"tags"`
 }
 
 type User struct {
@@ -27,6 +28,7 @@ func main() {
 				IsMale: true,
 			},
 			Level: 10,
+			Tags: []string{"season 1", "region a"},
 		},
 		{
 			User: User{
@@ -34,6 +36,7 @@ func main() {
 				IsMale: false,
 			},
 			Level: 25,
+            Tags: []string{"season 1", "region b"},
 		},
 	}
 }
@@ -151,6 +154,13 @@ for _, player := range filteredPlayers {
 | $ge    | double       | Match successfully when the value of the matching object is greater than or equal to the filter value                                                                                         | `{"age": {"$ge": 20}}`           |
 | $range | double Range | Match successfully when the value of the matching object is greater than or equal to the first element in the filter values and less than or equal to the second element in the filter values | `{"age": {"$range": [20, 30]}}`  |
 
+#### Number Array filters
+
+| Key  | Value Type   | Description                                                                                                                           | Filter Examples                            |
+|------|--------------|---------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------|
+| $eq  | double Array | Match successfully when each element of the matching array is equal to the element at each corresponding position of the filter value | `{"itemIds": {"$eq": [1000, 1001, 1002]}}` |
+| $all | double Array | Match successfully when the matching array contains every element of the filter value                                                 | `{"itemIds": {"$all": [1000, 1005]}}`      |
+
 #### String filters
 
 | Key    | Value Type                 | Description                                                                                                                                                                                   | Filter Examples                                              |
@@ -160,6 +170,13 @@ for _, player := range filteredPlayers {
 | $in    | string Array               | Match successfully when the value of the matching object is equal to any of the filter values                                                                                                 | `{"userName": {"$in": ["Scott", "Tom", "Bob"]}}`             |
 | $range | string Range               | Match successfully when the value of the matching object is greater than or equal to the first element in the filter values and less than or equal to the second element in the filter values | `{"serialNumber": {"$range": ["abcde00001", "abcde99999"]}}` |
 | $regex | string(regular expression) | Match successfully when the value of the matching object match filter value as regular expression                                                                                             | `{"userName": {"$regex": "^S"}}`                             |
+
+#### String Array filters
+
+| Key  | Value Type   | Description                                                                                                                           | Filter Examples                               |
+|------|--------------|---------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------|
+| $eq  | string Array | Match successfully when each element of the matching array is equal to the element at each corresponding position of the filter value | `{"tags": {"$eq": ["season 1", "region c"]}}` |
+| $all | string Array | Match successfully when the matching array contains every element of the filter value                                                 | `{"tags": {"$all": ["season 3"]}}`            |
 
 ### Scene filters
 
@@ -178,10 +195,12 @@ type IFilterBuilder interface {
   // Or And must be placed before any other method call, and only one of them can be called, at most once.
   Or() IFilterBuilder
   And() IFilterBuilder
-  // KStringV KBoolV KNumberV are used to build `$eq` filters of corresponding data types.
+  // KStringV KStringArrayV KBoolV KNumberV KNumberArrayV are used to build `$eq` filters of corresponding data types.
   KStringV(key string, value string) IFilterBuilder
+  KStringArrayV(key string, value []string) IFilterBuilder
   KBoolV(key string, value bool) IFilterBuilder
   KNumberV(key string, value float64) IFilterBuilder
+  KNumberArrayV(key string, value []float64) IFilterBuilder
   // KObjectV is used to build filters other than `$eq`.
   KObjectV(key string, value FilterBuilderObject) IFilterBuilder
   // Build is usually placed at the end of the chaining method calls and returns the filter string. It is reentrant.
@@ -192,5 +211,5 @@ type IFilterBuilder interface {
 ```
 
 * `Or`/`And` must be placed before any other method call, and only one of them can be called, at most once.
-* `KStringV`/`KBoolV`/`KNumberV` are used to build `$eq` filters of corresponding data types when `KObjectV` is used to build other filters like `$lt`, `$range`, `$in` and all other filters mentioned above.
+* `KStringV`/`KStringArrayV`/`KBoolV`/`KNumberV`/`KNumberArrayV` are used to build `$eq` filters of corresponding data types when `KObjectV` is used to build other filters like `$lt`, `$range`, `$in` and all other filters mentioned above.
 * `Build` is usually placed at the end of the chaining method calls and returns the filter string. `Build` is reentrant and you can call `Reset` to clean all the filters in the `IFilterBuilder` if you need to build another filter string.
